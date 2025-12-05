@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import InputPanel from './components/InputPanel';
 import ResultsDashboard from './components/ResultsDashboard';
 import AiAdvisor from './components/AiAdvisor';
@@ -17,7 +17,7 @@ const App: React.FC = () => {
     retentionD30: 5,
   });
 
-  const [aiState, setAiState] = useState<AiAnalysisState>({
+  const [analysis, setAnalysis] = useState<AiAnalysisState>({
     loading: false,
     content: null,
     error: null,
@@ -28,17 +28,13 @@ const App: React.FC = () => {
     return calculateSimulation(inputs);
   }, [inputs]);
 
-  const handleAiAnalysis = async () => {
-    setAiState({ loading: true, content: null, error: null });
+  const handleAnalyze = async () => {
+    setAnalysis({ loading: true, content: null, error: null });
     try {
-      const analysisText = await analyzeProfitability(inputs, results);
-      setAiState({ loading: false, content: analysisText, error: null });
-    } catch (error) {
-      setAiState({ 
-        loading: false, 
-        content: null, 
-        error: "Impossible de contacter Gemini. Vérifiez votre clé API ou réessayez." 
-      });
+      const result = await analyzeProfitability(inputs, results);
+      setAnalysis({ loading: false, content: result, error: null });
+    } catch (err: any) {
+      setAnalysis({ loading: false, content: null, error: err.message || "Une erreur est survenue" });
     }
   };
 
@@ -52,7 +48,7 @@ const App: React.FC = () => {
                 AdROI Calculator
             </h1>
             <p className="text-slate-400 mt-2 text-lg">
-                Simulateur de rentabilité UA (User Acquisition) & Analyse IA
+                Simulateur de rentabilité UA (User Acquisition)
             </p>
         </header>
 
@@ -75,14 +71,10 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Results & AI (8 cols) */}
+          {/* Right Column: Results (8 cols) */}
           <div className="lg:col-span-8 space-y-8">
             <ResultsDashboard results={results} />
-            <AiAdvisor 
-                onAnalyze={handleAiAnalysis} 
-                analysis={aiState} 
-                disabled={inputs.installs === 0 || inputs.adSpend === 0}
-            />
+            <AiAdvisor onAnalyze={handleAnalyze} analysis={analysis} disabled={false} />
           </div>
 
         </div>
