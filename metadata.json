@@ -1,0 +1,5 @@
+{
+  "name": "AdROI Calculator",
+  "description": "Calculateur de point de rentabilité (Break-even ROAS) pour applications mobiles basé sur les dépenses publicitaires, l'ARPDAU et la rétention.",
+  "requestFramePermissions": []
+}
